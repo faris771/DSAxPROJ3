@@ -2,7 +2,7 @@
  * AUTHOR:FARIS ABUFARHA
  * ID:1200546
  * SEC:3
- * REPO LINK:https://github.com/faris771/DSAxPROJ3
+ * REPO LINK: https://github.com/faris771/DSAxPROJ3
  * IDE: JETBRAINS CLION
  * COMPILER: gcc
  * OS: LINUX UBUNTU
@@ -120,6 +120,20 @@ typedef struct listNode {
 } listNode;
 
 typedef listNode *pNode;
+
+
+typedef struct intList{
+
+    int indx;
+    struct  intLis * next;
+}intList;
+
+typedef intList * pIntList;
+
+
+
+
+
 
 
 bool isEmptyList(listNode *head) {
@@ -297,11 +311,12 @@ typedef struct hashNode {
     int creditHours;
     String department;
     pNode topicsList;
-    int flag; //-1 deleted, 0 empty, 1 normal
+    int flag;      //-1 deleted, 0 empty, 1 normal
 
 
 
-}hashNode;
+}hashNode; //= {"","",0,"",null,0};
+
 
 typedef hashNode * pHash;
 
@@ -310,13 +325,29 @@ int allPrimeArray [] = { 2,   3,   5,   7,   11,   13,   17,   19,   23,   29,  
 
 pHash table1 = null;
 pHash table2 = null;
-int TABLE_SIZE = 101; //initially
+int TABLE_CAP = 211; //initially
+int TABLE_SIZE= 0;
 
 
-void makeTable(pHash);
-void readFile(pHash table);
+
+
+void makeTable(hashNode **t);
+void readFile();
 int hash1(String s);
 int hash2(String s);
+void reHash();
+void menu();
+
+void cmd1();
+void cmd2();
+void cmd3();
+void cmd4();
+void cmd5();
+void cmd6();
+void cmd7();
+void cmd8();
+int searchT1(String s);
+int searchT2(String s);
 
 
 
@@ -324,80 +355,135 @@ int hash2(String s);
 
 int main() {
 
-    int a = hash1("faris");
-    int b = hash2("faris");
+    table1 = malloc(TABLE_CAP * sizeof(hashNode));
+    for (int i = 0; i < TABLE_CAP; ++i) {
+        table1[i].flag = 0;
+
+    }
+    table2 = malloc(TABLE_CAP * sizeof(hashNode));
+    for (int i = 0; i < TABLE_CAP; ++i) {
+        table2[i].flag = 0;
+
+    }
+
+
+    readFile();
+
+    printf("%d\n", TABLE_SIZE);
+
+    //    readFile();
+
+    line();
+    welcome();
+    line();
+
+    int ch;
+
+
+    while (true) {
+
+        menu();
+        line();
+
+        scanf("%d", &ch);
+
+        if (ch == 1) {
+            cmd1();
+            line();
+        }
+        else if (ch == 2){
+            cmd2();
+            line();
+        }
+        else if (ch ==3 ){
+            cmd3();
+
+            line();
+        }
+        else if (ch ==4 ){
+            cmd4();
+            line();
+        }
+        else if (ch == 5){
+            cmd5();
+            line();
+        }
+        else if (ch == 6){
+            cmd6();
+
+            line();
+        }else if (ch == 7){
+            cmd7();
+
+            line();
+        }
+        else if (ch == 8) {
+            cmd8();
+            line();
+        }
+        else if (ch == -1) {
+            line();
+            break;
+
+        }
+
+        else {
+            red();
+            printf("INVALID INPUT \n");
+            reset();
+            line();
+
+        }
+
+
+
+    }
+
+    printf("THANK YOU COME AGAIN !!\n");
+
+
+
+
+
+
+
+
 
 
 
     return 0;
 }
 
-
-
-
-
-
-//void readFile(hashNode *root) {
-//    FILE *in = fopen("courses.txt", "r");
-//    if (in == null) {
-//        red();
-//        printf("CAN'T READ FILE! \n");
-//        reset();
-//        return ;
-//    }
-//    String leftStr;
-//    String rightStr;
-//    String strCourse, strHours, strCourseCode, strDep;
-//    String HCD;
-//
-//
-//    char buffer[MAX_LINE];
-//    while (fgets(buffer, MAX_LINE, in)) {
-//
-//
-//        if (buffer[strlen(buffer) - 1] == '\n') {
-//            buffer[strlen(buffer) - 1] = '\0';
-//
-//        }
-//        strcpy(leftStr, strtok(buffer, "/"));//left of '/'
-//        strcpy(rightStr, strtok(null, "/"));//right
-//
-//        //left stuff
-//        strcpy(tmpAvlNode->course, trimString(strtok(leftStr, ":")));
-//        strcpy(HCD, trimString(strtok(null, ":")));//WORKING
-//
-//        tmpAvlNode->creditHours = atoi(strtok(HCD, "#"));
-//        strcpy(tmpAvlNode->courseCode, trimString(strtok(null, "#")));
-//        strcpy(tmpAvlNode->department, trimString(strtok(null, "#")));
-//        // loop through the string to extract all other tokens
-//        tmpAvlNode->topicsList = makeEmptyList(tmpAvlNode->topicsList);
-//        char *token = strtok(rightStr, ",");
-////        printf("topics\n");
-//        while (token != NULL) {
-//
-//            //fixes new line in the last segment
-//
-//            if (token[strlen(token) - 1] == '\n') {
-//                token[strlen(token) - 1] = '\0';
-//            }
-//
-//            insertAtEndList(trimString(token), tmpAvlNode->topicsList);
-//            token = strtok(NULL, ",");
-//        }
-//        root = insert(*tmpAvlNode, root);
-//
-//    }
-//    fclose(in);
-//    return root;
-//}
-
-void makeTable(pHash t) {
-    t = malloc(sizeof(101 * sizeof(hashNode)));
+void menu(){
+    printf("1. Print hashed tables (including empty spots).\n"
+           "2. Print out table size and the load factor.\n"
+           "3. Print out the used hash functions.\n"
+           "4. Insert a new record to hash table (insertion will be done on\n"
+           "both hash tables).\n"
+           "5. Search for a specific word (specify which table to search in).\n"
+           "6. Delete a specific record (from both tables).\n"
+           "7. Compare between the two methods in terms of number of\n"
+           "collisions occurred.\n"
+           "8. Save hash table back to a file named saved_courses.txt (of the\n"
+           "double hashing)\n"
+           "-1. exit\n");
 
 }
 
 
-int hash1(char *s) { // QUADRATIC
+
+
+void makeTable(hashNode **t) {
+    *t = malloc( TABLE_CAP * sizeof(hashNode));
+    for (int i = 0; i < TABLE_CAP; ++i) {
+
+        printf("tst\n");
+
+    }
+}
+
+
+int hash1(String s) { // QUADRATIC
 
     int fun = 0;
 
@@ -408,15 +494,20 @@ int hash1(char *s) { // QUADRATIC
     }
 
     int hashIndx;
-    for (int i = 0; i < TABLE_SIZE ; ++i) {
-        hashIndx = (fun + (int)  pow(i, 2)) % TABLE_SIZE;
-        printf("%d\n", hashIndx);
+    for (int i = 0; i < TABLE_CAP ; ++i) {
+        hashIndx = abs((fun + (int)  pow(i, 2)) )% TABLE_CAP;
+//
+//        printf("asdsadsa %d\n", hashIndx);
+//
+//        printf("%d\n", table1[hashIndx].flag);
 
-//        if (table1[hashIndx].flag == 0 || table1[hashIndx].flag == -1) {
-//
-//            return hashIndx;
-//
-//        }
+
+        if (table1[hashIndx].flag == 0 || table1[hashIndx].flag == -1) {
+
+            printf("%d\n", hashIndx);
+            return hashIndx;
+
+        }
 
     }
 
@@ -425,7 +516,387 @@ int hash1(char *s) { // QUADRATIC
 
 }
 
-int hash2(char *s) {
+int hash2(String s) {
+    int fun1 = 0;
+    int fun2 = 0;
+
+
+    int sLen = strlen(s);
+    for (int i = 0; i < sLen; ++i) {
+        fun1 += (int) pow(31, sLen - 1 - i) * s[i];
+
+    }
+    printf("%d\n", fun1);
+
+
+     fun2 = (7 - (fun1 % 7));
+
+
+    int indx = 0;
+    for (int i = 0; i < TABLE_CAP; ++i) {
+        indx = abs((fun1 + (i * fun2) )) % TABLE_CAP ;
+        printf("dx  %d\n", indx);
+
+        if (table2[indx].flag == 0 || table2[indx].flag == -1) {
+
+            return indx;
+
+        }
+
+
+    }
+
+
+}
+
+void reHash() {
+    if (TABLE_SIZE >= 0.5 * TABLE_CAP) {
+
+
+
+    }
+
+}
+
+void readFile() {
+
+    FILE *in = fopen("offered_courses.txt", "r");
+    if (in == null) {
+        red();
+        printf("CAN'T READ FILE! \n");
+        reset();
+        return ;
+    }
+    String leftStr;
+    String rightStr;
+    String strCourseName, strHours, strCourseCode, strDep;
+    String HCD;
+
+
+    char buffer[MAX_LINE];
+
+    int indx1;
+    int indx2;
+    while (fgets(buffer, MAX_LINE, in)) {
+        printf("%s\n", buffer);
+
+        if (buffer[strlen(buffer) - 1] == '\n') {
+            buffer[strlen(buffer) - 1] = '\0';
+
+        }
+        strcpy(leftStr, strtok(buffer, "/"));//left of '/'
+        strcpy(rightStr, strtok(null, "/"));//right
+
+        //left stuff
+        strcpy(strCourseName, trimString(strtok(leftStr, ":")));
+        indx1 = hash1(strCourseName);
+        indx2 = hash2(strCourseName);
+
+        printf("tst\n");
+        strcpy(table1[indx1].courseName, strCourseName);
+        strcpy(table2[indx2].courseName, strCourseName);
+
+        table1[indx1].flag = 1;
+        table2[indx2].flag = 1;
+        TABLE_SIZE += 1;
+        printf("COURSE %s\n", strCourseName);
+        printf("hsah1 %d  hash2 %d\n", indx1, indx2); // fine
+
+
+
+
+
+        strcpy(HCD, trimString(strtok(null, ":")));//WORKING
+
+        int hrs = atoi(strtok(HCD, "#"));
+        table1[indx1].creditHours = hrs;
+        table2[indx2].creditHours = hrs;
+
+
+
+        strcpy(strCourseCode, trimString(strtok(null, "#")));
+        strcpy(table1[indx1].courseCode, strCourseCode);
+        strcpy(table2[indx2].courseCode, strCourseCode);
+
+
+        strcpy(strDep, trimString(strtok(null, "#")));
+        strcpy(table1[indx1].department, strDep);
+        strcpy(table2[indx2].department, strDep);
+
+
+        table1[indx1].topicsList= makeEmptyList(table1[indx1].topicsList);
+        table2[indx2].topicsList= makeEmptyList(table2[indx2].topicsList);
+
+
+
+
+        char *token = strtok(rightStr, ",");
+        while (token != NULL) {
+
+            //fixes new line in the last segment
+
+            if (token[strlen(token) - 1] == '\n') {
+                token[strlen(token) - 1] = '\0';
+            }
+
+            insertAtEndList(trimString(token), table1[indx1].topicsList);
+            insertAtEndList(trimString(token), table2[indx2].topicsList);
+
+
+            token = strtok(NULL, ",");
+        }
+
+    }
+
+
+    fclose(in);
+
+}
+
+void cmd1() {
+    //===================table 1 ====================
+    cyan();
+    printf("TABLE 1 : \n");
+    reset();
+    for (int i = 0; i < TABLE_CAP; ++i) {
+
+        printf("BUCKET: %d :\t\t", i);
+        if (table1[i].flag == 0 ) {
+
+            red();
+            printf(" -- ");
+            reset();
+
+        }
+        else {
+            blue();
+            printf("%s", table1[i].courseName);
+            reset();
+        }
+        printf("\n");
+
+
+    }
+    line();
+    cyan();
+    printf("TABLE 2 : \n");
+    reset();
+    for (int i = 0; i < TABLE_CAP; ++i) {
+
+        printf("BUCKET: %d :\t\t",i);
+        if (table2[i].flag == 0 ) {
+            red();
+            printf(" -- ");
+            reset();
+
+        }
+        else {
+            printf("%s", table2[i].courseName);
+        }
+        printf("\n");
+
+
+    }
+
+
+
+
+
+
+    //===================table 2 ====================
+
+}
+
+void cmd2() {
+    printf("TABLE 1\n");
+    printf("SIZE:  %d\n", TABLE_SIZE);
+    printf("%.2f\n", (float) TABLE_SIZE / (float) TABLE_CAP);
+
+
+
+
+
+}
+
+void cmd3() {
+    printf("QUADRATIC FUNCTION :         fun += (int)pow(31, sLen - 1 - i) * s[i] MOD TABLE_CAPACITY  ;\n");
+    printf("where 0 <= i < TABLE_CAPACITY, sLen is string length \n");
+
+    printf("DOUBLE HASHING FUNCTION: \n");
+    printf("abs((fun1 + i * fun2) MOD TABLE_CAPACITY )\n");
+    printf("where  0 <= i < TABLE CAPACITY, sLen is string length \n");
+
+}
+
+void cmd4() {
+    String courseName;
+    int dummyInt;
+
+    printf("PLEASE INPUT COURSE NAME:\n");
+    fgetc(stdin);
+    fgets(courseName, MAX_STRING, stdin);
+    if (courseName[strlen(courseName) - 1] == '\n') {
+        courseName[strlen(courseName) - 1] = '\0';
+
+    }
+
+    int indx1 = hash1(courseName);
+    int indx2 = hash2(courseName);
+    printf("cmd4 %d  %d\n", indx1, indx2);
+
+
+    String courseCode;
+    int hrs;
+    printf("ENTER: COURSE CODE, CREDIT HOURS RESPECTIVELY:\n");
+    scanf("%s%d", courseCode, &hrs);
+
+    String dep;
+    fgetc(stdin);
+    printf("DEPATMENT:\n");
+    fgets(dep, MAX_STRING, stdin);
+    if (dep[strlen(dep) - 1] == '\n') {
+        dep[strlen(dep) - 1] = '\0';
+
+    }
+
+    String topicsStr;
+
+
+    table1[indx1].topicsList = makeEmptyList(table1[indx1].topicsList);
+
+    table2[indx2].topicsList = makeEmptyList(table2[indx2].topicsList);
+
+
+    while (true) {
+        printf("5.PLEASE INPUT TOPICS ONE BY ONE, OR PRESS -1 WHEN YOU ARE DONE\n");
+        fflush(stdin);
+
+        fgets(topicsStr, MAX_STRING, stdin);
+        if (topicsStr[strlen(topicsStr) - 1] == '\n') {
+            topicsStr[strlen(topicsStr) - 1] = '\0';
+
+        }
+        if (strcmp(trimString(topicsStr), "-1") == 0) {
+            break;
+        }
+
+        insertAtEndList(topicsStr, table1[indx1].topicsList);
+        insertAtEndList(topicsStr, table2[indx2].topicsList);
+
+
+
+    }
+    strcpy(table1[indx1].courseName, courseName);
+    table1[indx1].flag = 1;
+    table1[indx1].creditHours = hrs;
+    strcpy(table1[indx1].courseCode, courseCode);
+    strcpy(table1[indx1].department, dep);
+
+    //table2
+
+    strcpy(table2[indx2].courseName, courseName);
+    table2[indx2].flag = 1; // occupied
+    table2[indx2].creditHours = hrs;
+    strcpy(table2[indx2].courseCode, courseCode);
+    strcpy(table2[indx2].department, dep);
+
+    TABLE_SIZE++;
+
+
+
+
+
+}
+
+void cmd5() {
+    int ch;
+    String name;
+
+
+    printf("PLEASE INPUT COURSE NAME:\n");
+    fgetc(stdin);
+    fgets(name, MAX_STRING, stdin);
+    if (name[strlen(name) - 1] == '\n') {
+        name[strlen(name) - 1] = '\0';
+
+    }
+
+    a5:;
+    printf("PLEASE CHOOSE WHICH TABLE TO SEARCH IN \n");
+    printf("1))\n");
+    printf("2))\n");
+    scanf("%d", &ch);
+
+    int indx;
+
+    if (ch == 1) {
+        indx = searchT1(name);
+        if (indx >= 0) {
+            printf("%d\n", indx);
+
+        }
+        else
+            printf("NOT FOUND \n");
+
+    }
+    else if (ch == 2) {
+        indx = searchT2(name);
+        if (indx >= 0) {
+            printf("%d\n", indx);
+
+        }
+        else
+            printf("NOT FOUND \n");
+
+    }
+    else {
+        printf("INVALID TABLE PLEASE TRY AGAIN!\n");
+        goto a5;
+
+    }
+
+
+
+
+}
+
+int searchT1(char *s) {
+    int fun = 0;
+
+    int sLen = strlen(s);
+    for (int i = 0; i < sLen; ++i) {
+        fun += (int) pow(31, sLen - 1 - i) * s[i];
+
+    }
+
+    int hashIndx;
+    for (int i = 0; i < TABLE_CAP; ++i) {
+        hashIndx = abs((fun + (int) pow(i, 2))) % TABLE_CAP;
+//
+//        printf("asdsadsa %d\n", hashIndx);
+//
+//        printf("%d\n", table1[hashIndx].flag);
+
+        if (table1[hashIndx].flag == 0) {
+            printf("NOT FOUND !\n");
+            return  -5;
+
+
+        }
+
+
+        if (strcmp(table1[hashIndx].courseName, s) == 0) {
+
+            return hashIndx;
+
+        }
+
+
+    }
+    return -5;
+}
+
+int searchT2(char *s) {
     int fun1 = 0;
     int fun2 = 0;
 
@@ -443,13 +914,91 @@ int hash2(char *s) {
     }
 
     int indx = 0;
-    for (int i = 0; i < TABLE_SIZE; ++i) {
-        indx = (fun1 + i * fun2) % TABLE_SIZE;
-        printf("hash 2 : \n");
-//        if (table2[indx].flag == 0 || table2[indx].flag == -1) {
-//            return indx;
-//        }
+    for (int i = 0; i < TABLE_CAP; ++i) {
+        indx = abs((fun1 + i * fun2) % TABLE_CAP);
 
+        if (table2[indx].flag == 0) {
+            printf("NOT FOUND !\n");
+
+        }
+
+
+        if (strcmp(table2[indx].courseName, s) == 0) {
+
+            return indx;
+
+        }
+
+
+
+    }
+    return -5;
+}
+
+void cmd6() {
+    String courseName;
+
+    printf("PLEASE INPUT COURSE NAME YOU WISH TO DELETE\n");
+    fgetc(stdin);
+    fgets(courseName, MAX_STRING, stdin);
+
+    int indx1 = searchT1(courseName);
+    if (indx1 != -5) {
+        table1[indx1].flag = -1;
+        table1[indx1].topicsList = makeEmptyList(table1[indx1].topicsList);
+
+    }
+    else {
+        red();
+        printf("NOT FOUND IN TABLE1 !\n");
+        reset();
+
+    }
+    int indx2 = searchT2(courseName);
+    if (indx2 != -5) {
+
+        table2[indx2].flag = -1;
+        table2[indx2].topicsList = makeEmptyList(table2[indx2].topicsList);
+
+    }
+    else {
+        red();
+        printf("NOT FOUND IN TABLE1 !\n");
+        reset();
+
+    }
+
+
+
+
+
+}
+
+void cmd8() {
+    FILE *out = fopen("saved_courses.txt", "w");
+
+
+
+    for (int i = 0; i < TABLE_CAP; ++i) {
+
+        if (table2[i].flag == 1) {
+            fprintf(out, "%s:%d#%s#%s/",
+                    table2[i].courseName, table2[i].creditHours, table2[i].courseCode, table2[i].department);
+
+            listNode *iter = null;
+            for (iter = table2[i].topicsList->next; iter->next != NULL; iter = iter->next) {
+                fprintf(out, "%s, ", iter->topic);
+
+            }
+            fprintf(out, "%s ", iter->topic);
+
+            fprintf(out, "\n");
+
+
+
+
+
+        }
     }
 
 
