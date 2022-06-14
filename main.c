@@ -416,13 +416,18 @@ void cmd7();
 
 void cmd8();
 
-int searchT1(String s);
+void searchT1(String s);
 
 int searchT2(String s);
 
 bool isPrime(int x);
 
 int getDoublePrime(int cap);
+
+int searchByName1(String name);
+int searchByName2(String name);
+
+
 
 
 int main() {
@@ -486,8 +491,7 @@ int main() {
             line();
         }
         else if (ch == 7) {
-//            cmd7();
-
+            cmd7();
             line();
         }
         else if (ch == 8) {
@@ -732,7 +736,7 @@ void readFile() {
         //left stuff
         strcpy(strCourseName, trimString(strtok(leftStr, ":")));
 
-
+        //asdasdsad
         indx1 = hash1(strHash1(strCourseName));
         indx2 = hash2(strHash1(strCourseName), strHash2(strCourseName));
 
@@ -804,14 +808,14 @@ void cmd1() {
     for (int i = 0; i < TABLE_CAP; ++i) {
 
         printf("BUCKET: %d :\t\t", i);
-        if (table1[i].flag == 0) {
+        if (table1[i].flag == 0 || table1[i].flag == -1) {
 
             red();
             printf(" -- ");
             reset();
 
         }
-        else {
+        else if (table1[i].flag == 1) {
             blue();
             printf("%s", table1[i].courseName);
             reset();
@@ -827,13 +831,13 @@ void cmd1() {
     for (int i = 0; i < TABLE_CAP; ++i) {
 
         printf("BUCKET: %d :\t\t", i);
-        if (table2[i].flag == 0) {
+        if (table2[i].flag == 0 || table2[i].flag == -1) {
             red();
             printf(" -- ");
             reset();
 
         }
-        else {
+        else if (table2[i].flag == 1) {
             printf("%s", table2[i].courseName);
         }
         printf("\n");
@@ -895,6 +899,9 @@ void cmd4() {
 
     int indx1 = hash1(strHash1(courseName));
     int indx2 = hash2(strHash1(courseName), strHash2(courseName));
+    //
+
+
     printf("cmd4 %d  %d\n", indx1, indx2);
 
 
@@ -982,15 +989,9 @@ void cmd5() {
     int indx;
 
     if (ch == 1) {
-        indx = searchT1(name);
-        if (indx >= 0) {
-            printf("found in\n");
-            printf("%d\n", indx);
+        printf("%s\n", name);
 
-        }
-        else {
-            printf("NOT FOUND \n");
-        }
+        searchT1(name);
 
     }
     else if (ch == 2) {
@@ -1013,19 +1014,65 @@ void cmd5() {
 
 }
 
-int searchT1(char *s) {
-    int hashIndx = hash1(strHash1(s)) - 1;
-    if (table1[hashIndx].flag == 0) {
-        printf("NOT FOUND !\n");
-        return -5;
+void searchT1(char *s) {
+    int i = searchByName1(s);
+    if (i == -1) {
+        printf("NOT FOUND\n");
+    }
+    else {
+
+        fprintf(stdout, "%s:%d#%s#%s/",
+                table1[i].courseName, table1[i].creditHours, table1[i].courseCode, table1[i].department);
+
+        listNode *iter = null;
+        for (iter = table1[i].topicsList->next; iter->next != NULL; iter = iter->next) {
+            fprintf(stdout, "%s, ", iter->topic);
+
+        }
+        fprintf(stdout, "%s ", iter->topic);
+
+        fprintf(stdout, "\n");
 
     }
 
 
-    if (strcmp(table1[hashIndx].courseName, s) == 0 && table1[hashIndx].flag == 1) {
-        return hashIndx;
 
-    }
+
+//    int index = strHash1(s);
+//
+//    if (table1[index /*% TABLE_CAP*/].flag == 0 ) {
+//        return -5;
+//    }
+//    else if (table1[index /*% TABLE_CAP*/].flag == 1) {
+//        if (strcmp(table1[index].courseName, s) == 0) {
+//            return index;
+//
+//        }
+//    }
+//
+//    int i = 1;
+//    int newIndx = (index + i * i) % TABLE_CAP;
+//
+//    while (true) {
+//        if (table1[newIndx].flag == 1) {
+//            if (strcmp(table1[newIndx].courseName, s) == 0) {
+//                return newIndx;
+//
+//            }
+//        }
+//        else if (table1[newIndx].flag == 0) {
+//            return -5;
+//        }
+//
+//        i++;
+//        newIndx = (index + i * i) % TABLE_CAP;
+//    }
+//    return newIndx;
+//
+
+    //
+//    int hashIndx = hash1(strHash1(s)) - 1;
+
 
 
 }
@@ -1033,32 +1080,48 @@ int searchT1(char *s) {
 
 int searchT2(char *s) {
 
-    int hashIndx = hash2(strHash1(s), strHash2(s)) ;
-    printf("%d\n", hashIndx);
-    if (table1[hashIndx].flag == 0) {
-        printf("NOT FOUND !\n");
-        return -5;
+    int i = searchByName2(s);
+    if (i == -1) {
+        printf("NOT FOUND\n");
+    }
+    else {
+
+        fprintf(stdout, "%s:%d#%s#%s/",
+                table1[i].courseName, table1[i].creditHours, table1[i].courseCode, table1[i].department);
+
+        listNode *iter = null;
+        for (iter = table1[i].topicsList->next; iter->next != NULL; iter = iter->next) {
+            fprintf(stdout, "%s, ", iter->topic);
+
+        }
+        fprintf(stdout, "%s ", iter->topic);
+
+        fprintf(stdout, "\n");
 
     }
 
-
-    if (strcmp(table1[hashIndx].courseName, s) == 0 && table1[hashIndx].flag == 1) {
-        return hashIndx;
-
-    }
 }
 
 void cmd6() {
     String courseName;
 
+
     printf("PLEASE INPUT COURSE NAME YOU WISH TO DELETE\n");
     fgetc(stdin);
     fgets(courseName, MAX_STRING, stdin);
 
-    int indx1 = searchT1(courseName);
-    if (indx1 != -5) {
-        table1[indx1].flag = -1;
-        table1[indx1].topicsList = makeEmptyList(table1[indx1].topicsList);
+
+    if (courseName[strlen(courseName) - 1] == '\n') {
+        courseName[strlen(courseName) - 1] = '\0';
+    }
+//    printf("COURSE: %s\n", courseName);
+
+    int i1 = searchByName1(courseName);
+
+    if (i1 >= 0) {
+
+        printf("TESTSING %s\n", table1[i1].courseName);
+        table1[i1].flag = -1;
 
     }
     else {
@@ -1067,12 +1130,12 @@ void cmd6() {
         reset();
 
     }
-    int indx2 = searchT2(courseName);
-    if (indx2 != -5) {
 
-        table2[indx2].flag = -1;
-        table2[indx2].topicsList = makeEmptyList(table2[indx2].topicsList);
+    int i2 = searchByName2(courseName);
+    printf("i2 %d\n", i2);
 
+    if (i2 >= 0) {
+        table2[i2].flag = -1;
     }
     else {
         red();
@@ -1080,6 +1143,22 @@ void cmd6() {
         reset();
 
     }
+
+
+
+//    int indx2 = searchT2(courseName);
+//    if (indx2 != -5) {
+//
+//        table2[indx2].flag = -1;
+//        table2[indx2].topicsList = makeEmptyList(table2[indx2].topicsList);
+//
+//    }
+//    else {
+//        red();
+//        printf("NOT FOUND IN TABLE1 !\n");
+//        reset();
+//
+//    }
 
 
 }
@@ -1164,4 +1243,66 @@ void cmd7() {
     printf("%d\n", COLL2);
 
 
+}
+
+int searchByName1(String name) {
+
+    int index = strHash1(name);
+    int i = 0;
+    int newIndex = (index + i * i) % TABLE_CAP;
+    while (strcmp(name, table1[newIndex].courseName) != 0) {
+
+        i++;
+        newIndex = (index + i * i) % TABLE_CAP;
+        if (table1[newIndex].flag == 0) {
+            return -1;
+        } // not found -> empty
+    }
+    if (table1[newIndex].flag == 1) {
+
+        return newIndex;
+    }
+    else {
+
+        return -1;
+
+    } //not found
+
+
+}
+
+int searchByName2(char *name) {
+
+//    for (int i = 0; i < TABLE_CAP; ++i) {
+//        if (table2[i].flag == 1) {
+//            if (strcmp(table2[i].courseName, name) == 0) {
+//                return i;
+//            }
+//
+//        }
+//        else if (table2[i].flag = 0) {
+//            return -1;
+//        }
+//    }
+//
+    int f1 = strHash1(name);
+    int f2 = strHash2(name);
+    int i = 0;
+    int newIndex = (f1 + i * f2) % TABLE_CAP;
+    int oldIndex = newIndex;
+    while (table2[newIndex].flag != 0 && strcmp(name, table2[newIndex].courseName) != 0) {
+
+        i++;
+        newIndex = (f1 + i * f2) % TABLE_CAP;
+        if (table2[newIndex].flag == 0) {
+            return -1;
+        } // not found -> empty
+    }
+    if (table2[newIndex].flag == 1) {
+
+        return newIndex;
+    }
+    else {
+        return -1;
+    } //not found
 }
