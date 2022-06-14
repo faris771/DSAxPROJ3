@@ -425,9 +425,8 @@ bool isPrime(int x);
 int getDoublePrime(int cap);
 
 int searchByName1(String name);
+
 int searchByName2(String name);
-
-
 
 
 int main() {
@@ -446,7 +445,7 @@ int main() {
 
     readFile();
 
-    printf("%d\n", TABLE_SIZE);
+//    printf("%d\n", TABLE_SIZE);
 
     //    readFile();
 
@@ -724,7 +723,7 @@ void readFile() {
     int indx1;
     int indx2;
     while (fgets(buffer, MAX_LINE, in)) {
-        printf("%s\n", buffer);
+//        printf("%s\n", buffer);
 
         if (buffer[strlen(buffer) - 1] == '\n') {
             buffer[strlen(buffer) - 1] = '\0';
@@ -740,15 +739,15 @@ void readFile() {
         indx1 = hash1(strHash1(strCourseName));
         indx2 = hash2(strHash1(strCourseName), strHash2(strCourseName));
 
-        printf("tst\n");
+//        printf("tst\n");
         strcpy(table1[indx1].courseName, trimString(strCourseName));
         strcpy(table2[indx2].courseName, trimString(strCourseName));
 
         table1[indx1].flag = 1;
         table2[indx2].flag = 1;
         TABLE_SIZE += 1;
-        printf("COURSE %s\n", strCourseName);
-        printf("hsah1 %d  hash2 %d\n", indx1, indx2); // fine
+//        printf("COURSE %s\n", strCourseName);
+//        printf("hsah1 %d  hash2 %d\n", indx1, indx2); // fine
 
         if (TABLE_SIZE > 0.5 * TABLE_CAP) {
             reHash();
@@ -807,7 +806,7 @@ void cmd1() {
     reset();
     for (int i = 0; i < TABLE_CAP; ++i) {
 
-        printf("BUCKET: %d :\t\t", i);
+        printf("BUCKET: %d :\t\t", i+1);
         if (table1[i].flag == 0 || table1[i].flag == -1) {
 
             red();
@@ -830,7 +829,7 @@ void cmd1() {
     reset();
     for (int i = 0; i < TABLE_CAP; ++i) {
 
-        printf("BUCKET: %d :\t\t", i);
+        printf("BUCKET: %d :\t\t", i+1);
         if (table2[i].flag == 0 || table2[i].flag == -1) {
             red();
             printf(" -- ");
@@ -856,6 +855,10 @@ void cmd1() {
 
 void cmd2() {
     printf("TABLE 1\n");
+    printf("SIZE:  %d\n", TABLE_SIZE);
+    printf("%.3f\n", (float) TABLE_SIZE / (float) TABLE_CAP);
+
+    printf("TABLE 2\n");
     printf("SIZE:  %d\n", TABLE_SIZE);
     printf("%.3f\n", (float) TABLE_SIZE / (float) TABLE_CAP);
 
@@ -895,6 +898,18 @@ void cmd4() {
     if (courseName[strlen(courseName) - 1] == '\n') {
         courseName[strlen(courseName) - 1] = '\0';
 
+    }
+    if (strHash1(courseName) != -1) {
+
+        if (table1[strHash1 (courseName) ].flag != -1 ) {
+
+
+            red();
+            printf("ALREADY EXIST\n");
+
+            reset();
+            return;
+        }
     }
 
     int indx1 = hash1(strHash1(courseName));
@@ -992,12 +1007,13 @@ void cmd5() {
         printf("%s\n", name);
 
         searchT1(name);
+//        printf("BUCKET : %d\n", indx+1);
 
     }
     else if (ch == 2) {
         indx = searchT2(name);
         if (indx >= 0) {
-            printf("%d\n", indx);
+//            printf("BUCKET : %d\n", indx+1);
 
         }
         else {
@@ -1020,6 +1036,7 @@ void searchT1(char *s) {
         printf("NOT FOUND\n");
     }
     else {
+        printf("BUCKET : %d\n", i+1);
 
         fprintf(stdout, "%s:%d#%s#%s/",
                 table1[i].courseName, table1[i].creditHours, table1[i].courseCode, table1[i].department);
@@ -1084,7 +1101,9 @@ int searchT2(char *s) {
     if (i == -1) {
         printf("NOT FOUND\n");
     }
+
     else {
+        printf("BUCKET : %d\n", i+1);
 
         fprintf(stdout, "%s:%d#%s#%s/",
                 table1[i].courseName, table1[i].creditHours, table1[i].courseCode, table1[i].department);
@@ -1122,6 +1141,7 @@ void cmd6() {
 
         printf("TESTSING %s\n", table1[i1].courseName);
         table1[i1].flag = -1;
+        TABLE_SIZE--;
 
     }
     else {
@@ -1164,8 +1184,13 @@ void cmd6() {
 }
 
 void cmd8() {
-    FILE *out = fopen("saved_courses.txt", "w");
-
+    FILE *out = fopen("saved_courses.txt", "a");
+    if (out == null) {
+        red();
+        printf("CAN'T OPEN FILE \n");
+        reset();
+        return;
+    }
 
     for (int i = 0; i < TABLE_CAP; ++i) {
 
