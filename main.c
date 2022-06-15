@@ -445,10 +445,6 @@ int main() {
 
     readFile();
 
-//    printf("%d\n", TABLE_SIZE);
-
-    //    readFile();
-
     line();
     welcome();
     line();
@@ -658,14 +654,14 @@ void reHash() {
 
     TABLE_CAP = getDoublePrime(TABLE_SIZE);
 
-
-    tmp1 = malloc(TABLE_CAP * sizeof(hashNode));
-    tmp2 = null;
-    tmp2 = malloc(TABLE_CAP * sizeof(hashNode));
+    table1 = null;
+    table1 = malloc(TABLE_CAP * sizeof(hashNode));
+    table2 = null;
+    table2 = malloc(TABLE_CAP * sizeof(hashNode));
 
     for (int i = 0; i < TABLE_CAP; ++i) {
-        tmp1[i].flag = 0;
-        tmp2[i].flag = 0;
+        table1[i].flag = 0;
+        table2[i].flag = 0;
 
     }
     int indx1, indx2;
@@ -846,11 +842,6 @@ void cmd1() {
 
 
 
-
-
-
-    //===================table 2 ====================
-
 }
 
 void cmd2() {
@@ -871,7 +862,7 @@ void cmd3() {
            "        hashSum = (hashSum << 5) + *(s++);\n"
            "    return abs(hashSum MOD TABLE_CAP);\n"
            "    }\n");
-    printf("string hashing function 1: \n");
+    printf("string hashing function 2: \n");
     printf("\n"
            "    for (int i = 0; i < sLen; ++i) {\n"
            "        fun2 += (int) pow(31, sLen - 1 - i) * s[i];\n"
@@ -899,9 +890,9 @@ void cmd4() {
         courseName[strlen(courseName) - 1] = '\0';
 
     }
-    if (strHash1(courseName) != -1) {
+    if (searchByName1(courseName) != -1) {
 
-        if (table1[strHash1 (courseName) ].flag != -1 ) {
+        if (table1[searchByName1(courseName) ].flag != -1 ) {
 
 
             red();
@@ -917,7 +908,7 @@ void cmd4() {
     //
 
 
-    printf("cmd4 %d  %d\n", indx1, indx2);
+//    printf("cmd4 %d  %d\n", indx1, indx2);
 
 
     String courseCode;
@@ -1166,25 +1157,10 @@ void cmd6() {
 
 
 
-//    int indx2 = searchT2(courseName);
-//    if (indx2 != -5) {
-//
-//        table2[indx2].flag = -1;
-//        table2[indx2].topicsList = makeEmptyList(table2[indx2].topicsList);
-//
-//    }
-//    else {
-//        red();
-//        printf("NOT FOUND IN TABLE1 !\n");
-//        reset();
-//
-//    }
-
-
 }
 
 void cmd8() {
-    FILE *out = fopen("saved_courses.txt", "a");
+    FILE *out = fopen("saved_courses.txt", "w");
     if (out == null) {
         red();
         printf("CAN'T OPEN FILE \n");
@@ -1211,6 +1187,7 @@ void cmd8() {
         }
     }
 
+    fclose(out);
 
 }
 
